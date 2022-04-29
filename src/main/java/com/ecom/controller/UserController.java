@@ -18,7 +18,7 @@ import com.ecom.service.UserService;
 import com.ecom.util.JWTUtil;
 
 @RestController
-@RequestMapping("/v1")
+//@RequestMapping("/v1")
 public class UserController {
 	
 	
