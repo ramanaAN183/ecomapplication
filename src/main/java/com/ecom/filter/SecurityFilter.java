@@ -23,7 +23,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private JWTUtil jwtUtil;
-	
+
 	@Autowired
 	private MyUserDetailsService myUserDetailsService;
 
@@ -35,28 +35,29 @@ public class SecurityFilter extends OncePerRequestFilter {
 		String token=null;
 		String userName=null;
 
-		if(authorizationHeader!=null & authorizationHeader.startsWith("Bearer ") ) {
-
+		if(authorizationHeader!=null ) {
+			if( authorizationHeader.startsWith("Bearer ") ) {
 			token=authorizationHeader.substring(7);
 			userName=jwtUtil.extractUsername(token);
-			
+			}
+
 		}
-		if(userName!=null & SecurityContextHolder.getContext().getAuthentication()==null) {
-			
+		if(userName!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
+
 			UserDetails userdetails = myUserDetailsService.loadUserByUsername(userName);
-			
+
 			if(jwtUtil.validateToken(token, userdetails)) {
-				
+
 				UsernamePasswordAuthenticationToken  usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userdetails,null,userdetails.getAuthorities());
-				
+
 				usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				
+
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			}
-			
+
 		}
 		filterChain.doFilter(request, response);
-	}	
+	}
 
 }

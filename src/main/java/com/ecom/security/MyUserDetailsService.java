@@ -20,10 +20,10 @@ public class MyUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		//System.out.println("--1---");
+		
 	UserModel um=userRepositeory.userLogin(username);
 	if(um.getName()!=null) {
-	//System.out.println(um.getId()+"--"+um.getName()+"--"+um.getPassword()+"--"+um.getRole()+"--"+um.getIsActive()+"--");
+	
 	return  new User(um.getName(),um.getPassword(),new ArrayList<>());
 	}
 	else

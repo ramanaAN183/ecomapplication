@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.ecom.filter.SecurityFilter;
 import com.ecom.util.JWTUtil;
 
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @EnableWebSecurity
@@ -33,9 +33,14 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(myUserDetailsService);
 	}
 	
+//	@Bean
+//	public PasswordEncoder passwordEncoder(){
+//		return NoOpPasswordEncoder.getInstance();
+//	}
+	
 	@Bean
-	public PasswordEncoder passwordEncoder(){
-		return NoOpPasswordEncoder.getInstance();
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 	
 	@Bean(name=BeanIds.AUTHENTICATION_MANAGER)
@@ -47,11 +52,16 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/auth").permitAll().anyRequest().authenticated()
+		http.csrf().disable().authorizeRequests().antMatchers("/auth/**","/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**").permitAll().anyRequest().authenticated()
 		.and().exceptionHandling().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(securityFilter,UsernamePasswordAuthenticationFilter.class);
-		
+
 	}
-	
+
 
 }
