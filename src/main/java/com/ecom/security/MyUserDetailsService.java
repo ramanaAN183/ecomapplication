@@ -28,7 +28,6 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 	else
 		return  (UserDetails) new UsernameNotFoundException("");
-			
 	}
-
+	
 }
