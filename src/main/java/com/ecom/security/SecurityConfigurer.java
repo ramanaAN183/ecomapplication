@@ -11,11 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 import com.ecom.filter.SecurityFilter;
 import com.ecom.util.JWTUtil;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @EnableWebSecurity
@@ -26,21 +28,15 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private SecurityFilter securityFilter;
-	//private JWTUtil jwtutil;
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(myUserDetailsService);
-	}
-	
-//	@Bean
-//	public PasswordEncoder passwordEncoder(){
-//		return NoOpPasswordEncoder.getInstance();
-//	}
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(myUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 	
 	@Bean(name=BeanIds.AUTHENTICATION_MANAGER)
@@ -52,7 +48,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/a/**").hasAnyAuthority("manager").antMatchers("/a/**").hasAnyRole("manager") .antMatchers("/auth/**","/v2/api-docs",
+		http.csrf().disable().authorizeRequests().
+		antMatchers("/a/**").hasAnyAuthority("ADMIN")
+		.antMatchers("/m/**").hasAnyAuthority("manager")
+		.antMatchers("/ma/**").hasAnyAuthority("manager","ADMIN")
+		.antMatchers("/auth/**","/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
                 "/configuration/security",

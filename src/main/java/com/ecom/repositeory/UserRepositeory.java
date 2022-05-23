@@ -9,6 +9,8 @@ import com.ecom.model.UserModel;
 @Repository
 public interface UserRepositeory extends JpaRepository<UserModel,Long> {
 	
+	
+//	UserModel findByUsername(String username);
 	@Query(value="select * from user where username=?1",nativeQuery = true)
 	 public UserModel userLogin(String username);
 	

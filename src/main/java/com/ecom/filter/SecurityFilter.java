@@ -45,6 +45,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 		if(userName!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
 
 			UserDetails userdetails = myUserDetailsService.loadUserByUsername(userName);
+			logger.info(userdetails.getUsername()+"---"+userdetails.getPassword()+"--1-");
 
 			if(jwtUtil.validateToken(token, userdetails)) {
 
